@@ -119,8 +119,25 @@ const server = http.createServer((req, res) => {
       const urlParts = req.url.split('/');
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
-        const dog = dogs.find(dog => dog.dogId == dogId);
+        const dog = dogs.find(dog => {
+          return dog.dogId == Number(dogId);
+        });
+        console.log('🚀 ~ file: server.js ~ line 123 ~ req.on ~ dog', dog);
+
         // Your code here
+        const htmlTemplate = fs.readFileSync(
+          './views/dog-details.html',
+          'utf-8'
+        );
+        const htmlPage = htmlTemplate
+          .replace(/#{name}/g, dog.name)
+          .replace(/#{age}/g, dog.age);
+        const resBody = htmlPage;
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/html');
+        res.write(resBody);
+        return res.end();
       }
     }
 
